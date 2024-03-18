@@ -18,12 +18,8 @@ type StreamClient struct {
 	// https://pkg.go.dev/sync#Map
 }
 
-func NewStreamClient(network types.Network, token string, logLevel phx.LoggerLevel, onError func(error)) *StreamClient {
-	m := map[types.Network]string{
-		types.MAINNET: "wss://stream.openseabeta.com/socket",
-		types.TESTNET: "wss://testnets-stream.openseabeta.com/socket",
-	}
-	socketUrl := fmt.Sprintf("%s?token=%s", m[network], token)
+func NewStreamClient(ApiURL string, token string, logLevel phx.LoggerLevel, onError func(error)) *StreamClient {
+	socketUrl := fmt.Sprintf("%s?token=%s", ApiURL, token)
 
 	endPoint, _ := url.Parse(socketUrl)
 	socket := phx.NewSocket(endPoint)
