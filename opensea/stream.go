@@ -2,16 +2,20 @@ package opensea
 
 import (
 	"fmt"
-	"github.com/foundVanting/opensea-stream-go/types"
-	"github.com/xiaowang7777/phx"
 	"log"
 	"net/url"
 	"sync"
+
+	"github.com/foundVanting/opensea-stream-go/types"
+	"github.com/xiaowang7777/phx"
 )
+
+// https://docs.opensea.io/reference/using-stream-api-without-sdk
 
 type StreamClient struct {
 	socket   *phx.Socket
-	channels *sync.Map //map[string]*phx.Channel
+	Channels *sync.Map //map[string]*phx.Channel
+	// https://pkg.go.dev/sync#Map
 }
 
 func NewStreamClient(network types.Network, token string, logLevel phx.LoggerLevel, onError func(error)) *StreamClient {
@@ -34,7 +38,7 @@ func NewStreamClient(network types.Network, token string, logLevel phx.LoggerLev
 	socket.Logger = phx.NewSimpleLogger(logLevel)
 	return &StreamClient{
 		socket:   socket,
-		channels: &sync.Map{},
+		Channels: &sync.Map{},
 	}
 }
 
@@ -45,7 +49,7 @@ func (s StreamClient) Connect() error {
 func (s *StreamClient) Disconnect() error {
 	//s.socket.OnError()
 	fmt.Println("Succesfully disconnected from socket")
-	s.channels = &sync.Map{}
+	s.Channels = &sync.Map{}
 	return s.socket.Disconnect()
 }
 func (s *StreamClient) createChannel(topic string) (channel *phx.Channel) {
@@ -61,12 +65,12 @@ func (s *StreamClient) createChannel(topic string) (channel *phx.Channel) {
 	join.Receive("error", func(response any) {
 		log.Println("failed 2 joined channel:", channel.Topic(), response)
 	})
-	s.channels.Store(topic, channel)
+	s.Channels.Store(topic, channel)
 	return
 }
 func (s StreamClient) getChannel(topic string) (channel *phx.Channel) {
 
-	value, ok := s.channels.Load(topic)
+	value, ok := s.Channels.Load(topic)
 	if ok {
 		channel = value.(*phx.Channel)
 		return
@@ -90,7 +94,7 @@ func (s StreamClient) on(eventType types.EventType, collectionSlug string, callb
 			fmt.Println("channel.Leave err:", err)
 		}
 		leave.Receive("ok", func(response any) {
-			s.channels.Delete(topic)
+			s.Channels.Delete(topic)
 			fmt.Printf("Succesfully left channel %s listening for %s\n", topic, eventType)
 		})
 	}
