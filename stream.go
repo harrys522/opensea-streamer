@@ -1,4 +1,4 @@
-package opensea
+package opensea_streamer
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/foundVanting/opensea-stream-go/types"
+	"github.com/harrys522/opensea-streamer/types"
 	"github.com/xiaowang7777/phx"
 )
 

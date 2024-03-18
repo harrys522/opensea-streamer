@@ -18,7 +18,7 @@ This module requires Go 1.18 or later.
 Standard `go get`:
 
 ```
-$ go get github.com/foundVanting/opensea-stream-go
+go get github.com/harrys522/opensea-streamer
 ```
 
 # Getting Started
@@ -33,29 +33,30 @@ In order to make onboarding easy, we've integrated the OpenSea Stream API with o
 
 ```golang
 import (
-"fmt"
-"github.com/foundVanting/opensea-stream-go/entity"
-"github.com/foundVanting/opensea-stream-go/opensea"
-"github.com/foundVanting/opensea-stream-go/types"
-"github.com/mitchellh/mapstructure"
-"github.com/nshafer/phx"
+    "fmt"
+    openseaStream "github.com/harrys522/opensea-streamer"
 )
 
 func main() {
-    client := opensea.NewStreamClient(types.MAINNET, "api-key", phx.LogInfo, func(err error) {
+    client := openseaStream.NewStreamClient("wss://stream.openseabeta.com/socket", "api-key", phx.LogInfo, func(err error) {
         fmt.Println("NewStreamClient err:", err)
     })
     client.Connect()
+    interesting_topics := []string{"item_listed", "item_transferred"}
+    channels := client.Subscribe(interesting_topics)
+    go func() {
+		for {
+			select {
+			case msg := <-msgChannel:
+				// TODO: Add optional callback to re-encode the data for better size efficiency here.
 
-    client.OnItemListed("collection-slug", func(response any) {
-        var itemListedEvent entity.ItemListedEvent
-        err := mapstructure.Decode(response, &itemListedEvent)
-        if err != nil {
-            fmt.Println("mapstructure.Decode err:", err)
-        }
-        fmt.Printf("%+v\n", itemListedEvent)
-    })
-    select {}
+				fmt.Println(msg)
+				break
+			case <-ctx.Done():
+				break
+			}
+		}
+	}()
 }
 ```
 
