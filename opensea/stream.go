@@ -1,4 +1,4 @@
-package opensea_streamer
+package opensea
 
 import (
 	"fmt"

@@ -48,8 +48,7 @@ func main() {
 		for {
 			select {
 			case msg := <-msgChannel:
-				// TODO: Add optional callback to re-encode the data for better size efficiency here.
-
+				// Print the messages from the channel.
 				fmt.Println(msg)
 				break
 			case <-ctx.Done():
