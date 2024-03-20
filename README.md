@@ -1,3 +1,8 @@
+No longer developed due to the following tool that does exactly what we need this one to do, this SDK is not very useful outside of a very specific use-case.
+
+Much better SDK that we have gone ahead:
+> https://github.com/721tools/stream-api-go
+
 # OpenSea Stream API - golang SDK
 
 A Golang SDK for receiving updates from the OpenSea Stream API - pushed over websockets. We currently support the following event types on a per-collection basis:
